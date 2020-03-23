@@ -30,15 +30,15 @@ Criar o arquivo `package.json`
 $ npm init -y
 ```
 
-Instalando micro-framwork `express` para:
+Instalando o micro-framework `express` para:
 - configurar rotas
 - interpretar parâmertros
 
 ```bash
 $ npm install express
 ```
-### Hello World
-O arquivo `index.js` será o arquivo porincipal da aplicação
+### Escrevendo um *Hello World* no Node.JS
+O arquivo `index.js` será o arquivo principal da aplicação. Crie-o com o comando:
 ```bash
 $ touch index.js
 ```
@@ -62,7 +62,7 @@ app.listen(3333);
 ```
 $ node index.js
 ```
-Acessando o endereço `localhost:3333`no browser, teremos o erro `cannot GET /` porque nenhuma rota foi definida.
+Acessando o endereço `localhost:3333` no browser, teremos o erro `cannot GET /` porque nenhuma rota foi definida.
 
 Código até agora:
 
@@ -88,9 +88,7 @@ O método `get()` sempre recebe dois parâmetros: o primeiro é a rota, no caso 
 
 Nossa callback function também espera 2 parâmetros: a *requisição* e a *resposta*, que chameremos de *request* e *response*,  respectivamente.
 
-```
-OBS.: Aqui utilizamos o conceito de *arrow function* na criação da *callback function*.
-```
+**OBS**.: Aqui utilizamos o conceito de *arrow function* na criação da *callback function*.
 
 Como vamos criar um backend **REST**, iremos retornar um objeto `JSON` ao invés de texto. Portanto, nosso `Olá Mundo` pode ficar assim:
 
