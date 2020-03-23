@@ -1,7 +1,11 @@
 # Semana omnistack 11 
 
+Este repositório contém o código apresentado na Semana Omnistack 11.0 e **um tutorial *rápido*** da aula do dia.
+
+**Todos os dias** esse arquivo será atualizado contendo as todas instruções e explicações mais importantes, de forma **simples** e **direta**.
+
 Feito para desenvolvimento em sistemas **\*nix** (macOS e Linux).  
-Em sistemas windows, alguns comandos podem ser diferentes.
+Usuários com sistema windows também podem acompanhar, porém alguns comandos podem ser diferentes.
 
 **OBS**: o caractere `$` indica que o comando deve ser digitado em um **emulador de terminal**, a famosa *tela preta*.
 
