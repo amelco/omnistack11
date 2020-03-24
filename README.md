@@ -526,3 +526,65 @@ app.use(express.json());
 app.use(routes);
 app.listen(3333);
 ```
+
+Crie o diretório `database` dentro de src e modifique o arquivo `knexfile.js`:
+```javascript
+development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './src/database/dev.sqlite3'
+    }
+  },
+```
+
+## Entidades
+
+Vamos identificar as entidades que serão as tabelas do nosso banco de dados.
+
+A primeira entidade é a `ONG`. As ONGs precisam armazenar `caso` (ou `incident`, em inglês), nossa segunda Entidade.
+
+Uma `ONG` pode ter vários casos e um `caso` pertence somente a uma `ONG`.
+
+## Funcionalidades
+
+Cada Entidade pode ter várias ações. As ações de todas as entidades serão as funcionalidades da aplicação.
+
+A `ONG` pode fazer:
+
+- login
+- logout
+- cadastro da ONG
+- cadastro de casos
+- deletar caso
+- listar casos específicos de uma ONG
+
+Na aplicação mobile, temos as seguintes funcionalidades:
+
+- Listar todos os casos das ONGs
+- Entrar em contato com uma ONG
+
+## Criando as tabelas
+
+As tabelas serão criadas utilizando a funcionalidade `migrations` do pacote `knex`.
+
+- Crie uma pasta `migrations` dentro de `database`.
+
+- Modifique o `knexfile.js`, adicionando uma nova configuração chamada `migrations`
+```javascript
+development: {
+    client: 'sqlite3',
+    connection: {
+      filename: './src/database/dev.sqlite3'
+    },
+    migrations: {
+      directory: '/src/database/migrations'
+    }
+  },
+```
+
+### Tabela ONGS
+
+Para criar a tabela ONGS, execute:
+```
+$ npx knex migrate:make create_ongs
+```
