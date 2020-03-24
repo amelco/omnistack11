@@ -489,18 +489,15 @@ O código completo de `routes.js` ficará assim:
 
 ```javascript
 const express = require('express');
-
-const routes = express.Router;
+const routes = express.Router();
 
 routes.get('/', (request, response) => {
     return response.send("Olá, Mundo!");
 });
 
 routes.get('/user/:id', (request, response) => {
-    
     const params = request.params;
     console.log(params);
-
     return response.json({
         texto: "Olá, mundo!",
         evento: "Semana Omnistack 11.0",
@@ -509,13 +506,23 @@ routes.get('/user/:id', (request, response) => {
 });
 
 routes.post('/user', (req, res) => {
-    
     const params = req.body;
     console.log(params);
-
     return res.send("Usuário adicionado!")
 });
 
 module.exports = routes;
 ```
 
+O arquivo `index.js` deverá sbaer que as rotas que estão no arquivo `routes.js`. Para isso modifique o `index.js`:
+
+```javascript
+const express = require('express');
+const routes = require('./routes');
+
+const app = express();
+
+app.use(express.json());
+app.use(routes);
+app.listen(3333);
+```
