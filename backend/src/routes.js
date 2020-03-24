@@ -5,11 +5,7 @@ routes.get('/', (request, response) => {
     return response.send("Olá, Mundo!");
 });
 
-routes.get('/user/:id', (request, response) => {
-    
-    const params = request.params;
-    console.log(params);
-
+routes.get('/user', (request, response) => {
     return response.json({
         texto: "Olá, mundo!",
         evento: "Semana Omnistack 11.0",
