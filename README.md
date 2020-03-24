@@ -532,7 +532,7 @@ Crie o diretório `database` dentro de src e modifique o arquivo `knexfile.js`:
 development: {
     client: 'sqlite3',
     connection: {
-      filename: './src/database/dev.sqlite3'
+      filename: './src/database/db.sqlite'
     }
   },
 ```
@@ -574,7 +574,7 @@ As tabelas serão criadas utilizando a funcionalidade `migrations` do pacote `kn
 development: {
     client: 'sqlite3',
     connection: {
-      filename: './src/database/dev.sqlite3'
+      filename: './src/database/db.sqlite'
     },
     migrations: {
       directory: './src/database/migrations'
@@ -588,3 +588,44 @@ Para criar a tabela ONGS, execute:
 ```
 $ npx knex migrate:make create_ongs
 ```
+
+Um novo arquivo com final `create_ongs.js` será criado. É esse arquivo que vamos inserir o código de criação da tabela `ongs`.
+
+Entre nesse novo arquivo e modifique o método `up`, que é responsável pela criação da tabela:
+
+```javascript
+exports.up = function(knex) {
+    return knex.schema.createTable('ongs', function(table) {
+        table.string('id').primary();
+        table.string('name').notNullable();''
+        table.string('email').notNullable();''
+        table.string('whatsapp').notNullable();''
+        table.string('city').notNullable();''
+        table.string('uf', 2).notNullable();''
+    });
+};
+```
+
+Aqui inserimos todos os campos necessários de nossa entidade `ONG`, com seus respectivos tipos.
+
+No método `down`, vamos colocar o comando de deletar a tabela `ongs`. O método `down` diz ao `knex`o que é necessário fazer caso algo dê errado e queiramos voltar atrás. 
+
+```javascript
+exports.down = function(knex) {
+    return knex.schema.dropTable('ongs');
+};
+```
+Para executar esse código e efetivamente criar a tabela `ongs` no banco de dados, executamos:
+
+```
+$ npx knex migrate:latest
+```
+
+O banco de dados `db.sqlite` será criado em `database`.
+
+### Tabela incidents
+
+O mesmo é feito para a tabela incidents:
+
+- cria a tabela com o comando: `npx knex migrate:make create_incidents`
+- edita o arquivo criado (com final `create_incidents.js`)
