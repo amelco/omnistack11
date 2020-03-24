@@ -597,11 +597,11 @@ Entre nesse novo arquivo e modifique o método `up`, que é responsável pela cr
 exports.up = function(knex) {
     return knex.schema.createTable('ongs', function(table) {
         table.string('id').primary();
-        table.string('name').notNullable();''
-        table.string('email').notNullable();''
-        table.string('whatsapp').notNullable();''
-        table.string('city').notNullable();''
-        table.string('uf', 2).notNullable();''
+        table.string('name').notNullable();
+        table.string('email').notNullable();
+        table.string('whatsapp').notNullable();
+        table.string('city').notNullable();
+        table.string('uf', 2).notNullable();
     });
 };
 ```
@@ -625,7 +625,30 @@ O banco de dados `db.sqlite` será criado em `database`.
 
 ### Tabela incidents
 
-O mesmo é feito para a tabela incidents:
+O mesmo é feito para a tabela `incidents`:
 
 - cria a tabela com o comando: `npx knex migrate:make create_incidents`
 - edita o arquivo criado (com final `create_incidents.js`)
+
+```javascript
+exports.up = function(knex) {
+    return knex.schema.createTable('incidents', function(table) {
+        table.increments();
+        table.string('title').notNullable();
+        table.string('description').notNullable();
+        table.decimal('value').notNullable();
+        table.string('ong_id').notNullable();
+        table.foreign('ong_id').references('id').inTable('ongs');
+    });  
+};
+
+exports.down = function(knex) {
+    return knex.schema.dropTable('incidents');
+};
+```
+
+- executa `npx knex migrate:latest`
+
+O importante aqui é entender que a tabela `incidents` possui um campo de identificação que é autoincrementável e que ela está relacionada com a tabela `ongs` através da *chave estrangeira* `ongs_is`. Tudo isso são informações bem comuns aos banco de dados SQL. Se você quiser mais informações, pode começar por [aqui](https://pt.wikiversity.org/wiki/Introdu%C3%A7%C3%A3o_ao_SQL/Criando_Tabelas).
+
+## Inserindo dados
