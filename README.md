@@ -652,3 +652,118 @@ exports.down = function(knex) {
 O importante aqui é entender que a tabela `incidents` possui um campo de identificação que é autoincrementável e que ela está relacionada com a tabela `ongs` através da *chave estrangeira* `ongs_is`. Tudo isso são informações bem comuns aos banco de dados SQL. Se você quiser mais informações, pode começar por [aqui](https://pt.wikiversity.org/wiki/Introdu%C3%A7%C3%A3o_ao_SQL/Criando_Tabelas).
 
 ## Inserindo dados
+
+### Cadastrando ongs
+
+Vamos fazer uma rota para cadastrar ongs no banco de dados (BD).
+
+- Altere o `routes.js` para adicionar uma nova rota `/ongs`
+
+---
+
+*LEMBRE-SE*: como é uma rota para **adicionar** algo no banco, o método a ser utilizado é o `POST`.
+
+---
+**routes.js**
+```javascript
+const express = require('express');
+const crypto = require('crypto');
+
+const routes = express.Router();
+
+routes.post('/ongs', (request, response) => {
+    const {name, email, whatsapp, city, uf} = request.body;
+
+    const id = crypto.randomBytes(4).toString('HEX');
+
+    console.log(data);
+
+    return response.json();
+});
+
+module.exports = routes;
+```
+
+As variáveis passadas no corpo da requisição são capturadas uma a uma. Essas variáveis são as que serão armazenadas na tabela `ongs`. O campo `id`, que nesta tabela não é gerado automaticamente pelo banco de dados, vai ser gerado por nós através de uma biblioteca chamada `crypto`, presente no `node`.
+
+Uma string aleatória formada por 4 bytes hexadecimais será gerado pelo `crypto` e armazenada no banco. Mas, para isso, precisamos conectar ao banco de dados./
+
+- crie o arquivo `connection.js` dentro de `database` para gerenciar as conexões ao banco de dados
+
+**connection.js**
+```javascript
+const knex = require('knex');
+const config = require('../../knexfile');
+
+const connection = knex(config.development);
+
+module.exports = connection;
+```
+
+Esse arquivo basicamente exporta a variável `connection` que contém as configurações necessárias para a conexão ao BD. Portanto, sempre que quisermos comunicação com o BD, devemos importar esse arquiivo (`connection.js`) no código. Portanto precisamos adicioná-lo ao `routes.js`:
+
+**routes.js**
+```javascript
+...
+const crypto = require('crypto');
+const connection = require('./database/connection');
+...
+```
+
+---
+
+**OBS**.: os três pontos (`...`) representam que existe código antes ou depois deles
+
+---
+
+Agora já podemos fazer operações/consultas no BD.
+
+Continuando com a implementação em `routes.js`, vamos adicionar o resto do código para adicionar uma ONG no BD.
+
+```javascript
+...
+routes.post('/ongs', async (request, response) => {
+    const {name, email, whatsapp, city, uf} = request.body;
+
+    const id = crypto.randomBytes(4).toString('HEX');
+
+    await connection('ongs').insert({
+        id,
+        name,
+        email,
+        whatsapp,
+        city,
+        uf
+    });
+
+    return response.json({id});
+...
+```
+
+Explicando o código:
+- `connection.insert` é um método do `knex` para inserir os dados na tabela passada como argumento (nesse caso `ongs`). Colocamos os dados que devem ser inseridos, na ordem que eles foram criados.
+- `return response.json({id})`: o que será retornado ao usuário é o `id` gerado para a ONG. Esse `id` vai servir de identificação da ONG na hora de ela fazer o login.
+- utilizamos `async` e `await` para garantir que o `id` só será retornado após a inserção dos dados na tabela `ongs`.
+
+### Testando com Insomnia
+
+Vamos testar nossa inserção dos dados de uma ONG. 
+
+- Adicione a rota `/ongs` no insmonia com o método `POST` e body do tipo `JSON``
+
+![](insert_ong.gif)
+
+- a resposta deve ser o `id` da ONG
+
+Para garantir que a ong foi cadastrada, vamos criar uma nova rota `/ongs` do tipo `GET` pra retornar todas as ONGs cadastradas.
+
+```javascript
+...
+routes.get('/ongs', async (request, response) => {
+    const ongs = await connection('ongs').select('*');
+    return response.json(ongs);
+});
+...
+```
+
+Para checar a nova rota, crie uma nova requisição no insomnia (a essa altura você já deve saber como) com a rota `localhost:3333/ongs` com método `GET`. Você deverá receber a lista de ONGs cadastradas em formato `JSON` como resposta.
