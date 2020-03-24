@@ -299,7 +299,7 @@ Caso você tente acessar a rota pelo navegador, obterá um erro dizendo que não
 
 Abra o insomnia e insira a rota `POST` que estamos desejando requisitar (`localhost:3333/user`), conforme mostrado abaixo:
 
-![](POST.gif)
+![](post.gif)
 
 ---
 
