@@ -1,12 +1,11 @@
 const express = require('express');
-const app = express();
-app.use(express.json());
+const routes = express.Router;
 
-app.get('/', (request, response) => {
+routes.get('/', (request, response) => {
     return response.send("Olá, Mundo!");
 });
 
-app.get('/user/:id', (request, response) => {
+routes.get('/user/:id', (request, response) => {
     
     const params = request.params;
     console.log(params);
@@ -18,7 +17,7 @@ app.get('/user/:id', (request, response) => {
     });
 });
 
-app.post('/user', (req, res) => {
+routes.post('/user', (req, res) => {
     
     const params = req.body;
     console.log(params);
@@ -26,4 +25,4 @@ app.post('/user', (req, res) => {
     return res.send("Usuário adicionado!")
 });
 
-app.listen(3333);
+module.exports = routes;
