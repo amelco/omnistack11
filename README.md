@@ -416,3 +416,106 @@ Assim, passmos a iniciar o `node` com:
 ```
 $ npm start
 ```
+
+## Bancos de Dados
+
+Existem bancos de dados relacionais (que utilizam linguagem `SQL` como o MySQL, SQLite, PostgreSQL MS SQL Server) e os não relacionais (Redis, Mongo, Couch), também chamados de NOSQL (*Not Only SQL*).
+
+Nesta edição, a semana omnistack optou por utilizar os bancos SQL por apresentar uma consistência de dados maior e pela capacidade de criar tabelas bem estruturadas e relacionadas. Se desejar se aprofundar mais nesse assunto, existem vários sites na internet que explicam isso. Você pode começar por [aqui](https://www.revista-programar.info/artigos/sql-vs-nosql/).
+
+O banco escolhido foi o [SQLite](https://www.sqlite.org/index.html).
+
+## Configurando o SQLite
+
+Existem algumas maneiras de se utilizar o SQL:
+
+- *Instalando o driver:*
+Você terá que fazer as consultas utilizando a linguagem `SQL`.
+
+- *Utilizando query builder:*
+Você utilizará javascript para fazer as consultas ao banco.
+
+Se utilizarmos o *query builder*, ele será responsável em traduzir o código javascript para o respectivo comando `SQL` utilizado pelo *driver*.
+
+Utilizaremos o [Knex.JS](http://knexjs.org/) como nosso *query builder*.
+
+## Configurando o Knex.JS
+
+Execute:
+```
+$ npm install knex
+```
+
+Depois execute o comando abaixo para a instalação do driver:
+```
+$ npm install sqlite3
+```
+
+Para criar o *arquivo de configuração* do banco de dados (`knexfile.js`), execute:
+```
+$ npx knex init
+```
+
+## Organizando arquivos
+
+Para começarmos o desenvolvimento de nosso backend, vamos colocar os arquivos criados por nós na pasta `src/`.
+
+- Crie a pasta `src/`
+- mova `index.js` para `src/`
+- Modifique o arquivo `packages.json` com o caminho correto de `index.js`
+
+```javascript
+"start": "nodemon src/index.js"
+```
+
+- crie o arquivo `routes.js` para armazenar as rotas da aplicação e mova todas as rotas criadas para esse arquivo.
+
+**routes.js**
+```javascript
+const express = require('express');
+
+const routes = express.Router;
+```
+
+A variável `routes` serve para *desacoplar* as rotas da aplicação. Assim, ao invés de definirmos as rotas como `app.get()`, será `routes.get()`.
+
+Assim, para que as rotas fiquem disponíveis para a aplicação, devemos exportá-las:
+
+```javascript
+modules.export = routes;
+```
+
+O código completo de `routes.js` ficará assim:
+
+```javascript
+const express = require('express');
+
+const routes = express.Router;
+
+routes.get('/', (request, response) => {
+    return response.send("Olá, Mundo!");
+});
+
+routes.get('/user/:id', (request, response) => {
+    
+    const params = request.params;
+    console.log(params);
+
+    return response.json({
+        texto: "Olá, mundo!",
+        evento: "Semana Omnistack 11.0",
+        aluno: "Andre Herman"
+    });
+});
+
+routes.post('/user', (req, res) => {
+    
+    const params = req.body;
+    console.log(params);
+
+    return res.send("Usuário adicionado!")
+});
+
+module.exports = routes;
+```
+
