@@ -8,7 +8,7 @@ module.exports = {
       filename: './src/database/dev.sqlite3'
     },
     migrations: {
-      directory: '/src/database/migrations'
+      directory: './src/database/migrations'
     }
   },
 
