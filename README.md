@@ -24,7 +24,7 @@ Usuários com sistema windows também podem acompanhar, porém alguns comandos p
 
 ## Iniciando aplicação Node.js
 
-Crie um diretório para guardar os  diretórios `backend` e o `frontend`, tipo:
+Crie um diretório para guardar os diretórios `backend` e o `frontend`, tipo:
 ```bash
 $ mkdir semana-omnistack-11
 $ cd semana-omnistack-11
@@ -46,7 +46,7 @@ $ npm init -y
 
 Instalando o micro-framework `express` para:
 - configurar rotas
-- interpretar parâmertros
+- interpretar parâmetros
 
 ```bash
 $ npm install express
@@ -100,7 +100,7 @@ app.get('/', (request, response) => {
 
 O método `GET()` sempre recebe dois parâmetros: o primeiro é a rota, no caso `/`, e o segundo é a função que será chamada quando a rota for demandada pelo browser, ou seja, a *callback function*.
 
-Nossa callback function também espera 2 parâmetros: a *requisição* e a *resposta*, que chameremos de *request* e *response*,  respectivamente.
+Nossa callback function também espera 2 parâmetros: a *requisição* e a *resposta*, que chamaremos de *request* e *response*, respectivamente.
 
 ---
 
@@ -150,15 +150,15 @@ app.get('/user', (request, response) => {
 app.listen(3333);
 ```
 
-#### Reinicando o Node.js
-Sempre que o código do index.js for alterado, o node precisa ser reinicado.
-Para fazer isso, execute vá ao terminal onde o node está sendo executado e digite a combinação das teclas `ctrl` e `c`. Isso irá partar o node. Após isso, redigite:
+#### Reiniciando o Node.js
+Sempre que o código do index.js for alterado, o node precisa ser reiniciado.
+Para fazer isso, execute vá ao terminal onde o node está sendo executado e digite a combinação das teclas `ctrl` e `c`. Isso irá parar o node. Após isso, redigite:
 
 ```
 $ node index.js
 ```
 
-para reexecutar o node com o arquivo `index.js` atualizado.
+Este comando reexecuta o node com o arquivo `index.js` atualizado.
 
 ---
 
@@ -183,7 +183,7 @@ O termo *boilerplate* se refere a estrutura básica de toda aplicação React.
 npx create-react-app frontend
 ```
 
-Após o processo de instalação (download das dependencias exigidas pelo react, estruturação das pastas e criação de arquivos) podemos entrar no diretório do frontend
+Após o processo de instalação (download das dependências exigidas pelo react, estruturação das pastas e criação de arquivos) podemos entrar no diretório do frontend
 
 ```
 cd frontend
@@ -193,7 +193,7 @@ Para iniciar a aplicação, digite
 ```
 npm start
 ```
-e acesse p endereço `localhost:3000` através de seu navgador (caso o a aplicação já não tenha feito isso automaticamente).
+e acesse p endereço `localhost:3000` através de seu navegador (caso o a aplicação já não tenha feito isso automaticamente).
 
 O comando `npm start` é um script que está definido dentro do arquivo `package.json`, que faz parte do *boilerplate* do `create-react-app`.
 
@@ -284,7 +284,7 @@ está **BUSCANDO** (método **GET**) informações (*texto, evento, aluno*) do u
 
 - Baixe e instale o [Insomnia](https://insomnia.rest/) seguindo os passos descritos em seu site.
 
-Vamos acessar uma rota POST. Modifique nossa rota que aponta para `/users` subsituindo o `GET` por `POST`:
+Vamos acessar uma rota POST. Modifique nossa rota que aponta para `/users` substituindo o `GET` por `POST`:
 
 ```javascript
 app.post('/user', (request, response) => {
@@ -297,7 +297,7 @@ app.post('/user', (request, response) => {
 ---
 Caso você tente acessar a rota pelo navegador, obterá um erro dizendo que não existe método `GET` para o recurso `/user`, o que é verdade porque substituímos o `GET` para `POST`.
 
-Abra o insomnia e insira a rota `POST` que estamos desejando requisitar (`localhost:3333/user`), conforme mostrado abaixo:
+Abra o Insomnia e insira a rota `POST` que estamos desejando requisitar (`localhost:3333/user`), conforme mostrado abaixo:
 
 ![](post.gif)
 
@@ -337,7 +337,7 @@ app.get('/user', (request, response) => {
     });
 });
 ```
-Nós voltamos ao método `GET` já que estamos buscando informações do backend, armazenamos todos os parâmetros **query** na variável `params` e pedimos para que seu conteúdo seja exibido no console (*emulador de temrinal*). Execute o código acima e observe a saída no console.
+Nós voltamos ao método `GET` já que estamos buscando informações do backend, armazenamos todos os parâmetros **query** na variável `params` e pedimos para que seu conteúdo seja exibido no console (*emulador de terminal*). Execute o código acima e observe a saída no console.
 
 Note que a resposta exibida no console é um objeto javascript.
 Tente adicionar mais parâmetros na `url` e veja como a saída no console se comporta.
@@ -361,8 +361,7 @@ app.get('/user/:id', (request, response) => {
 ```
 
 ### **Request body**
-São utilizados quando se deseja passar muitos parâmetros numa requisi
-ção, por exemplo quando se está criando um usuário.
+São utilizados quando se deseja passar muitos parâmetros numa requisição, por exemplo quando se está criando um usuário.
 
 Podemos criar uma nova rota em `/user` com o método `POST` (não tem problema ter um método `POST` e `GET` para a mesma rota) para visualizarmos o *request body* como parâmetro com o seguinte código:
 
@@ -382,7 +381,7 @@ Esses parâmetros são passados no "corpo" da requisição. Para fazer isso, no 
 
 Ao reiniciarmos o `node` e executarmos a rota `localhost:3333/user` com o método `POST` e um **request body** como parâmetro, percebemos que a saída no console é `undefined`. Isso acontece porque o `node` não entende saídas do tipo `JSON` ao menos que o configuremos pra isso.
 
-### Configurando Node.JS para 'enteder' JSON
+### Configurando Node.JS para 'entender' JSON
 
 Basta adicionar, logo após a definição do `app`, o seguinte:
 ```javascript
@@ -391,11 +390,11 @@ const app = express();
 app.use(express.json());
 ```
 
-Dessa forma o `node` consegue entender o `JSON`e o transforma em um objeto javascript para mostrar em sua saída.
+Dessa forma o `node` consegue entender o `JSON` e o transforma em um objeto javascript para mostrar em sua saída.
 
 ## Configurando o Nodemon
 
-Para automatizar a reinicialização do `node`sempre que um arquivo for alterado, basta instalar o nodemon com o seguinte comando:
+Para automatizar a reinicialização do `node` sempre que um arquivo for alterado, basta instalar o nodemon com o seguinte comando:
 
 ```
 $ npm install nodemon -D
@@ -412,7 +411,7 @@ por
 "start": "nodemon index.js"
 ```
 
-Assim, passmos a iniciar o `node` com:
+Assim, passaremos a iniciar o `node` com:
 ```
 $ npm start
 ```
@@ -514,7 +513,7 @@ routes.post('/user', (req, res) => {
 module.exports = routes;
 ```
 
-O arquivo `index.js` deverá sbaer que as rotas que estão no arquivo `routes.js`. Para isso modifique o `index.js`:
+O arquivo `index.js` deverá saber que as rotas que estão no arquivo `routes.js`. Para isso modifique o `index.js`:
 
 ```javascript
 const express = require('express');
@@ -577,7 +576,7 @@ development: {
       filename: './src/database/db.sqlite'
     },
     migrations: {
-      directory: './src/database/migrations'
+      directory: '/src/database/migrations'
     }
   },
 ```
