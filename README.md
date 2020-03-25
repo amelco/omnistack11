@@ -767,3 +767,156 @@ routes.get('/ongs', async (request, response) => {
 ```
 
 Para checar a nova rota, crie uma nova requisição no insomnia (a essa altura você já deve saber como) com a rota `localhost:3333/ongs` com método `GET`. Você deverá receber a lista de ONGs cadastradas em formato `JSON` como resposta.
+
+## Reorganizando a estrutura
+
+Vamos reorganizar a estrutura de nossos arquivos mais uma vez pra tornar a aplicação mais escalável.
+
+Vamos criar uma pasta `controllers` dentro de `src` para colocar a lógica de nossas rotas.
+
+A lógica da Entidade ONGs (por enquanto listar e cadastrar ONGs) serão colocadas aqui.
+
+**OngController.js**
+```javascript
+const crypto = require('crypto');
+const connection = require('../database/connection');
+
+module.exports = {
+    async index(request, response) {
+        const ongs = await connection('ongs').select('*');
+        return response.json(ongs);
+    },
+
+    async create(request, response) {
+        const { name, email, whatsapp, city, uf } = request.body;
+
+        const id = crypto.randomBytes(4).toString('HEX');
+
+        await connection('ongs').insert({
+            id,
+            name,
+            email,
+            whatsapp,
+            city,
+            uf
+        });
+
+        return response.json({ id });
+    }
+};
+```
+
+O código de `routes.js` então fica:
+```javascript
+const express = require('express');
+const OngController = require('./controllers/OngController');
+
+const routes = express.Router();
+
+routes.get('/ongs', OngController.index);
+routes.post('/ongs', OngController.create);
+```
+
+O que foi feito aqui:
+- As *callback functions* das rotas foram transeferidas para `OngController.js`
+- `crypto` e `connection` foram importadas em `OngController.js` pois estão sendo utilizadas
+- `crypto` e `connection` foram removidos de `routes.js` pois não estão sendo mais utilizadas
+- em `module exports` estão todos os métodos que serão exportados desse arquivo, ou seja, os métodos quye serão visíveis nos arquivos que utilizrem `OngController.js`
+- `OngController` deve ser importado em `routes.js` para poder ter acesso aos métodos
+
+A aplicação fica mais escalável e mais fácil de ler assim, pois basta adicionarmos novas rotas em `routes.js` e criarmos novos métodos em `OngController.js` que façam a lógica dessas rotas.
+
+### Cadastrando os casos (incidents)
+
+Com nossa nova estrutura pronta, vamos criar um controler para os casos, chamado `IncidentController.js` em `Controllers`.
+
+
+**IncidentController.js**
+```javascript
+const connection = require('../database/connection');
+
+module.exports = {
+    async create (request, response) {
+        const {title, description, value} = request.body;
+        const ong_id = request.headers.authorization;
+        const [id] = await connection('incidents').insert({
+            title,
+            description,
+            value,
+            ong_id
+        });
+
+        return response.json({id});
+    }
+};
+```
+
+Fazemos o mesmo que em `OngController.js`: exportamos um objeto com os métodos através de `module.exports`
+
+A novidade aqui é a utilização dos headers (cabeçalho da requisição) para pegar o valor de `ong_id`(a ONG responsável por cadastrar o caso). Nós conseguimnos simular o header da requisição com o Insmonia (*todo*).
+
+Após e execução da inserção do caso, a resposta retorna o `id` do caso recém criado.
+
+**routes.js**
+```javascript
+...
+const OngController = require('./controllers/OngController');
+const IncidentController = require('./controllers/IncidentController');
+
+...
+
+routes.post('/incidents', IncidentController.create);
+
+module.exports = routes;
+```
+
+As modificações em `routes.js` são simples, apenas importando `IncidentController` e adicionando a nova rota.
+
+### Adicionando rota de listagem de casos
+
+De maneira idêntica ao que foi feito com as ONGs, nós vamos criar uma nova rota para listar todos os casos (fica de exercício pra vocês enquanto eu não escrevo aqui =P)
+
+### Deletando casos
+
+Vamos adicionar uma rota (`/incidents/:id`) para deletar casos através do método HTTP `DELETE`. O `id` do caso a ser deletado precisa ser passado na url como um **route param**.
+
+```javascript
+...
+routes.delete('/incidents/:id', IncidentController.delete);
+...
+```
+
+Nada de novo nas modificações de `routes.js`.
+
+**IncidentController.js**
+```javascript
+...
+async delete (request, response) {
+    const {id} = request.params;
+    const ong_id = request.headers.authorization;
+
+    const incident = await connection('incidents')
+        .where('id', id)
+        .select('ong_id')
+        .first();
+    
+    if (incident.ong_id !== ong_id) {
+        return response.status(401).json({error: "Operation not permitted." });
+    }
+
+    await connection('incidents').where('id', id).delete();
+
+    return response.status(204).send();
+},
+...
+```
+
+Na lógica do método `delete` em `IncidentsController.js`, devemos verificar se a ONG que está querendo deletar o caso é a ong que a criou. De outra forma estaríamos correndo o risco de uma ONG deletar o caso de outra.
+
+Para evitar isso, fazemos uma consulta pra retornar o id da ONG que registrou a consulta pra depois comparar com o id da ong que estamos recebendo como **route param** (igual ao método create).
+
+Caso os ids sejam diferentes, retornamos ao browser o status 401, que significa que o usuario não tem autorização para fazer aquele request.
+
+Caso contrário, deletamos o caso e retornamos o satus 204, que significa que a requisição foi autorizada e executada porém não retorna nenhum conteúdo.
+
+### Listando casos específicos de uma ONG
